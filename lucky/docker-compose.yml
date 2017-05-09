@@ -1,0 +1,111 @@
+discovery:
+  image: "xushuaiemail/discovery"
+  hostname: discovery
+  ports:
+   - "8761:8761"
+
+config:
+  image: "xushuaiemail/config"
+  hostname: config
+  links:
+    - discovery
+  environment:
+     EUREKA_HOST: discovery
+     EUREKA_PORT: 8761
+
+
+zookeeper:
+  image: "wurstmeister/zookeeper"
+  hostname: zookeeper
+  expose:
+    - "2181"
+
+kafka:
+  image: "xushuaiemail/mykafka"
+  hostname: kafka
+  links:
+    - zookeeper:zk
+  expose:
+    - "9092"
+  environment:
+    - HOST_IP=localhost
+    - KAFKA_ADVERTISED_PORT=9092 
+    - KAFKA_BROKER_ID=1 
+    - ZK=zk
+
+mysqldb1:
+  image: "mysql"
+  hostname: mysqldb1
+  volumes:
+    - /home/ubuntu/mysql1:/var/lib/mysql
+  expose:
+    - "3306"
+  environment:
+    - MYSQL_ROOT_PASSWORD=arrow
+     
+user:
+  image: "xushuaiemail/user"
+  hostname: user
+  links:
+    - mysqldb1
+    - kafka
+    - discovery
+#    - config
+  ports:
+   - "80:80"
+  environment:
+     SPRING_PROFILES_ACTIVE: docker
+     EUREKA_HOST: discovery
+     EUREKA_PORT: 8761
+
+mysqldb2:
+  image: "mysql"
+  hostname: mysqldb2
+  volumes:
+    - /home/ubuntu/mysql2:/var/lib/mysql
+  expose:
+    - "3306"
+  environment:
+    - MYSQL_ROOT_PASSWORD=arrow
+     
+sell:
+  image: "xushuaiemail/sell"
+  hostname: sell
+  links:
+    - mysqldb2
+    - kafka
+    - discovery
+#    - config
+  ports:
+   - "8081:8081"
+  environment:
+     SPRING_PROFILES_ACTIVE: docker
+     EUREKA_HOST: discovery
+     EUREKA_PORT: 8761
+
+mysqldb3:
+  image: "mysql"
+  hostname: mysqldb3
+  volumes:
+    - /home/ubuntu/mysql3:/var/lib/mysql
+  expose:
+    - "3306"
+  environment:
+    - MYSQL_ROOT_PASSWORD=arrow
+     
+random:
+  image: "xushuaiemail/random"
+  hostname: random
+  links:
+    - mysqldb3
+    - kafka
+    - discovery
+#    - config
+  ports:
+   - "8082:8082"
+  environment:
+     SPRING_PROFILES_ACTIVE: docker
+     EUREKA_HOST: discovery
+     EUREKA_PORT: 8761
+
+

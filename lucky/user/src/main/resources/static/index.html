@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>用户管理</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+  <link href="css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css" />
+  <link href="css/jquery.decapitate.css" rel="stylesheet" type="text/css" />
+  <link href="css/styles.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+  <img src="header.png" alt="header image">
+  <div class="jumbotron">
+    <h1><a href="http://localhost/user">用户管理</a></h1>
+  </div>
+  
+  <table id="element-table" class="table table-bordered" >
+    <thead>
+      <tr>
+        <th>userId</th>
+        <th>userPassword</th>
+        <th>name</th>
+	<th>account</th>
+	<th>regTime</th>
+	<th>total</th>
+      </tr>
+    </thead>
+    <tbody>
+           
+    </tbody>
+  </table>
+
+ 
+
+  <img src="footer.jpg" alt="Spaceholder image to allow table to scroll off the page">
+  
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap-affix.js"></script>
+  <script src="js/jquery.decapitate.js"></script>
+  <script>
+	
+    $(document).ready(function() {
+	
+      
+	 $.ajax({  
+                url: '/alluser',  
+                type: 'GET',  
+                dataType: 'json',  
+                cache: false,  success: function(data)
+		{ 
+			$.each(data,function(index,value)
+			{
+			     str="<tr><td>"+value.userId+"</td><td>"+value.userPassword+"</td><td>"+value.name+"</td><td>"+value.account+"</td><td>"+value.regTime+"</td><td>"+value.total+"</td></tr>";
+
+                             $("#element-table tbody").append(str);
+                      	});}
+            }) 
+	
+	
+	
+      $('table').decapitate();
+    });
+ 	
+	              
+  </script>
+  </body>
+</html>

@@ -1,0 +1,88 @@
+#spring:
+#  jpa:
+#    database: POSTGRESQL
+#  datasource:
+#    platform: postgres
+#    url: jdbc:postgresql://postgres:5432/postgres
+#    username: postgres
+#    password: postgres
+#    driver-class-name: org.postgresql.Driver
+
+#postgresdb:
+#  image: busybox
+#  volumes:
+#    - /var/lib/mysql/data1234
+
+zookeeper:
+  image: "wurstmeister/zookeeper"
+  hostname: zookeeper
+  expose:
+    - "2181"
+
+kafka:
+  image: "mykafka"
+  hostname: kafka
+  links:
+    - zookeeper:zk
+  expose:
+    - "9092"
+#  ports: 
+#    - "9092:9092"
+  environment:
+    - HOST_IP=localhost
+    - KAFKA_ADVERTISED_PORT=9092 
+    - KAFKA_BROKER_ID=1 
+    - ZK=zk
+
+mysqldb:
+#  name: mysql
+  image: "mysql/test"
+  hostname: mysqldb
+  volumes:
+    - /home/ubuntu/test:/var/lib/mysql
+  expose:
+    - "3306"
+#  ports: 
+#    - "3306:3306"
+  environment:
+    - MYSQL_ROOT_PASSWORD=arrow
+     
+demo:
+  image: "xushuaiemail/demo"
+  hostname: demo
+#  volumes: /tmp
+#  name: discovery
+  links:
+    - mysqldb
+    - kafka
+  ports:
+   - "8080:8080"
+  environment:
+     SPRING_PROFILES_ACTIVE: docker
+    
+#mysqldb1:
+#  name: mysql
+#  image: "mysql/test"
+#  hostname: mysqldb1
+#  volumes:
+#    - /home/ubuntu/test1:/var/lib/mysql
+#  expose:
+#    - "3306"
+#  ports: 
+#    - "3306:3306"
+#  environment:
+#    - MYSQL_ROOT_PASSWORD=arrow
+     
+#ch3271:
+#  image: "ch327"
+#  hostname: ch3271
+#  volumes: /tmp
+#  name: discovery
+#  links:
+#    - mysqldb
+#  ports:
+#   - "8081:8080"
+#  environment:
+#     SPRING_PROFILES_ACTIVE: docker
+#     SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/test1
+

@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: user
+  cloud:
+    config:
+      enabled: true
+      discovery:
+        enabled: true
+        service-id: CONFIG #1
+eureka:
+  instance:
+    preferIpAddress: true
+    non-secure-port: ${server.port:80}
+  client:
+    service-url:
+      defaultZone: http://${eureka.host:localhost}:${eureka.port:8761}/eureka/
